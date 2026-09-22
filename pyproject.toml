@@ -1,0 +1,20 @@
+[project]
+name = "job-intelligence"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.141.1",
+    "uvicorn>=0.53.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.13.0",
+    "pytest>=9.1.1",
+    "ruff>=0.16.8",
+]
+
+[tool.pytest.ini_options] 
+pythonpath = ["."]
