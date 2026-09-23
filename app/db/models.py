@@ -68,7 +68,6 @@ class Company(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     website: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    location: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     
     def __repr__(self) -> str:
         return f"<Company(id={self.id}, name='{self.name}')>"
@@ -83,3 +82,41 @@ class Role(Base):
 
     def __repr__(self) -> str:
         return f"<Role(id={self.id}, name='{self.name}')>"
+    
+    
+    
+# Modelo Location
+class Location(Base):
+    __tablename__ = "locations"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    city: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    region: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    country: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+
+    def __repr__(self) -> str:
+        return f"<Location(id={self.id}, city='{self.city}', region='{self.region}', country='{self.country}')>"
+    
+    
+# Modelo Skill
+class Skill(Base):
+    __tablename__ = "skills"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    normalized_name: Mapped[str] = mapped_column(String(100), nullable=False)
+
+    def __repr__(self) -> str:
+        return f"<Skill(id={self.id}, name='{self.name}')>"
+    
+    
+class JobSkill(Base):
+    
+    __tablename__ = "job_skills"
+
+    job_id: Mapped[int] = mapped_column(ForeignKey("jobs.id"), primary_key=True)
+    skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id"), primary_key=True)
+
+    def __repr__(self) -> str:
+        return f"<JobSkill(job_id={self.job_id}, skill_id={self.skill_id})>"

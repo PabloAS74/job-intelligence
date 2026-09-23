@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Bases de datos
+*.db
+
+# Configuración del IDE
+.vscode/
+.idea/
