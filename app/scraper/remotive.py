@@ -5,9 +5,9 @@ from datetime import datetime
 
 class RemotiveScraper(BaseScraper):
     def scrape(self, keyword: str, location: str = "") -> List[ScrapedJob]:
-        print(f"🔍 Buscando '{keyword}' en la API de Remotive...")
+        print(f"Buscando '{keyword}' en Remotive...")
         
-        # Remotive tiene una API pública abierta. Le pasamos nuestra keyword.
+        # Usamos la API oficial de Remotive
         url = f"https://remotive.com/api/remote-jobs?search={keyword}"
         
         jobs_found = []
@@ -16,16 +16,15 @@ class RemotiveScraper(BaseScraper):
             response = client.get(url)
             
             if response.status_code != 200:
-                print(f"❌ Error al conectar: {response.status_code}")
+                print(f"Error: {response.status_code}")
                 return []
                 
-            # ¡Transformamos la respuesta directamente a un diccionario de Python!
             data = response.json()
             ofertas = data.get("jobs", [])
             
             for item in ofertas:
                 try:
-                    # Limpiamos un poco la descripción (a veces vienen textos enormes)
+                    # Recortamos la descripción 
                     description = item.get("description", "")
                     if len(description) > 5000:
                         description = description[:5000] + "..."
@@ -42,7 +41,7 @@ class RemotiveScraper(BaseScraper):
                     else:
                         published_at = datetime.now()
 
-                    # Mapeamos los datos usando los nombres exactos que exige tu modelo
+                    # Mapeamos los datos a nuestro ScrapedJob
                     job = ScrapedJob(
                         title=item.get("title", "Sin título"),
                         description=description,
@@ -51,7 +50,7 @@ class RemotiveScraper(BaseScraper):
                         source="remotive",
                         source_id=str(item.get("id", "")),
                         location=item.get("candidate_required_location", "No especificada"),
-                        role=item.get("title", "Sin título"), # Usamos el título como rol por defecto
+                        role=item.get("title", "Sin título"), 
                         published_at=published_at,
                         remote_type="100% Remote",
                         employment_type=item.get("job_type", "")
@@ -62,7 +61,7 @@ class RemotiveScraper(BaseScraper):
                     print(f"  ✓ {job.title[:40]}... en {job.company}")
                     
                 except Exception as e:
-                    print(f"  ❌ Error parseando oferta: {e}")
+                    print(f"Error parseando oferta: {e}")
                     
-        print(f"\n✅ ¡Se han extraído {len(jobs_found)} ofertas limpias!")
+        print(f"\nSe han extraído {len(jobs_found)} ofertas limpias de Remotive.\n")
         return jobs_found
