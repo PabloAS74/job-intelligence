@@ -1,5 +1,6 @@
 import httpx
 from typing import List
+import re
 from .base import BaseScraper, ScrapedJob
 from datetime import datetime
 
@@ -33,13 +34,18 @@ class RemotiveScraper(BaseScraper):
                     if fecha_pub:
                         # Convertimos el string a objeto datetime
                         try:
-                            # A veces viene con 'Z' al final, la limpiamos para evitar fallos
                             fecha_limpia = fecha_pub.replace('Z', '')
                             published_at = datetime.fromisoformat(fecha_limpia)
                         except:
                             published_at = datetime.now()
                     else:
                         published_at = datetime.now()
+
+                    # Tomamos el salario máximo y mínimo
+                    salary = re.search(r"\$(\d+)k\s*-\s*\$(\d+)k", item.get("salary", ""))
+                    if salary:
+                        salary_min = int(salary.group(1)) * 1000
+                        salary_max = int(salary.group(2)) * 1000
 
                     # Mapeamos los datos a nuestro ScrapedJob
                     job = ScrapedJob(
@@ -53,11 +59,14 @@ class RemotiveScraper(BaseScraper):
                         role=item.get("title", "Sin título"), 
                         published_at=published_at,
                         remote_type="100% Remote",
-                        employment_type=item.get("job_type", "")
+                        employment_type=item.get("job_type", ""),
+                        salary_min=salary_min if salary else None,
+                        salary_max=salary_max if salary else None,
+                        salary_currency="USD" if salary else None,
+                        experience_level=None,  # Remotive no proporciona este dato
                     )
                     
                     jobs_found.append(job)
-                    # Cambiamos job.company_name por job.company
                     print(f"  ✓ {job.title[:40]}... en {job.company}")
                     
                 except Exception as e:
