@@ -7,16 +7,16 @@ from pydantic import BaseModel, HttpUrl
 class ScrapedJob(BaseModel):
     title: str
     description: str
-    
+
     company: str
     url: HttpUrl
     location: Optional[str]
     role: Optional[str]
-   
+
     source: str  # Ej: "linkedin", "glassdoor"
     source_id: str  # El ID original de la oferta en esa web
-    
-    # Campos opcionales 
+
+    # Campos opcionales
     skills: List[str] = []  # Lista de habilidades requeridas
     remote_type: Optional[str] = None
     employment_type: Optional[str] = None
@@ -26,9 +26,8 @@ class ScrapedJob(BaseModel):
     salary_currency: Optional[str] = None
 
     published_at: Optional[datetime]
-    
-    
-    
+
+
 class BaseScraper(ABC):
     def __init__(self):
         self.headers = {
