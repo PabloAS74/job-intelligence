@@ -50,6 +50,8 @@ class RemotiveScraper(BaseScraper):
                     if salary:
                         salary_min = int(salary.group(1)) * 1000
                         salary_max = int(salary.group(2)) * 1000
+    
+                    employment_type = re.sub(r"_", "-", item.get("job_type", ""))
 
                     # Mapeamos los datos a nuestro ScrapedJob
                     job = ScrapedJob(
@@ -64,8 +66,8 @@ class RemotiveScraper(BaseScraper):
                         ),
                         role=item.get("title", "Sin título"),
                         published_at=published_at,
-                        remote_type="100% Remote",
-                        employment_type=item.get("job_type", ""),
+                        remote_type="remote",
+                        employment_type=employment_type,
                         salary_min=salary_min if salary else None,
                         salary_max=salary_max if salary else None,
                         salary_currency="USD" if salary else None,

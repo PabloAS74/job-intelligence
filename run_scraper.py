@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from app.db.database import SessionLocal
-from app.db.models import Company, Job, Location, Role
+from app.db.database import SessionLocal, engine
+from app.db.models import Company, Job, Location, Role, Base
 from app.scraper.remotive import RemotiveScraper
 
 
@@ -82,6 +82,10 @@ def guardar_en_bd(ofertas):
 
 
 def main():
+    
+    # Esta línea crea todas las tablas si no existen. Si ya existen, no hace nada.
+    Base.metadata.create_all(bind=engine)
+    
     scraper = RemotiveScraper()
     ofertas = scraper.scrape("python")
 
