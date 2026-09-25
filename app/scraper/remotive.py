@@ -1,12 +1,13 @@
-import httpx
-from typing import List
 import re
-from .base import BaseScraper, ScrapedJob
 from datetime import datetime
+
+import httpx
+
+from .base import BaseScraper, ScrapedJob
 
 
 class RemotiveScraper(BaseScraper):
-    def scrape(self, keyword: str, location: str = "") -> List[ScrapedJob]:
+    def scrape(self, keyword: str, location: str = "") -> list[ScrapedJob]:
         print(f"Buscando '{keyword}' en Remotive...")
 
         # Usamos la API oficial de Remotive

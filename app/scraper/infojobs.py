@@ -1,23 +1,22 @@
+import hashlib
+from urllib.parse import urljoin, urlparse
+
+from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 from playwright_stealth import stealth
-from bs4 import BeautifulSoup
-from typing import List
-from urllib.parse import urljoin, urlparse
-from datetime import datetime, timezone
-import hashlib
 
 from .base import BaseScraper, ScrapedJob
 
 
 class InfoJobsScraper(BaseScraper):
-    def scrape(self, keyword: str, location: str = "") -> List[ScrapedJob]:
+    def scrape(self, keyword: str, location: str = "") -> list[ScrapedJob]:
 
         print(f"Abriendo navegador para buscar '{keyword}' en InfoJobs...")
 
         formatted_keyword = keyword.replace(" ", "-").lower()
         url = f"https://www.infojobs.net/ofertas-trabajo/{formatted_keyword}"
 
-        jobs_found: List[ScrapedJob] = []
+        jobs_found: list[ScrapedJob] = []
 
         with sync_playwright() as p:
             # 1. Añadimos un argumento para desactivar la bandera de "Navegador Automatizado"

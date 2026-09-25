@@ -1,4 +1,4 @@
-from app.db.models import Company, Role
+from app.db.models import Company
 
 
 def test_create_and_read_entities(db_session):

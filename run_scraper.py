@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from app.scraper.remotive import RemotiveScraper
-
 from app.db.database import SessionLocal
-from app.db.models import Company, Role, Job, Location
+from app.db.models import Company, Job, Location, Role
+from app.scraper.remotive import RemotiveScraper
 
 
 def guardar_en_bd(ofertas):

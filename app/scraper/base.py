@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
 from datetime import datetime
+
 from pydantic import BaseModel, HttpUrl
 
 
@@ -10,22 +10,22 @@ class ScrapedJob(BaseModel):
 
     company: str
     url: HttpUrl
-    location: Optional[str]
-    role: Optional[str]
+    location: str | None
+    role: str | None
 
     source: str  # Ej: "linkedin", "glassdoor"
     source_id: str  # El ID original de la oferta en esa web
 
     # Campos opcionales
-    skills: List[str] = []  # Lista de habilidades requeridas
-    remote_type: Optional[str] = None
-    employment_type: Optional[str] = None
-    experience_level: Optional[str] = None
-    salary_min: Optional[int] = None
-    salary_max: Optional[int] = None
-    salary_currency: Optional[str] = None
+    skills: list[str] = []  # Lista de habilidades requeridas
+    remote_type: str | None = None
+    employment_type: str | None = None
+    experience_level: str | None = None
+    salary_min: int | None = None
+    salary_max: int | None = None
+    salary_currency: str | None = None
 
-    published_at: Optional[datetime]
+    published_at: datetime | None
 
 
 class BaseScraper(ABC):
@@ -35,5 +35,5 @@ class BaseScraper(ABC):
         }
 
     @abstractmethod
-    def scrape(self, keyword: str, location: str = "") -> List[ScrapedJob]:
+    def scrape(self, keyword: str, location: str = "") -> list[ScrapedJob]:
         pass
