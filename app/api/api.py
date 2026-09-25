@@ -13,9 +13,26 @@ app = FastAPI(
 )
 
 @app.get("/api/jobs", response_model=list[JobResponse])
-def get_jobs(limit: int = 10, db: Session = Depends(get_db)):
+def get_jobs(
+    limit: int = 10,
+    role: str | None = None,
+    location: str | None = None,
+    db: Session = Depends(get_db),
+    ):
     """
     Devuelve una lista de ofertas de trabajo.
     Puedes cambiar el límite añadiendo ?limit=20 en la URL.
     """
-    return db.query(Job).limit(limit).all()
+    # Consulta base
+    query = db.query(Job)
+    
+    if role:
+        query = query.filter(Job.title.ilike(f"%{role}%"))
+    
+    if location:
+        query = query.filter(Job.location.ilike(f"%{location}%"))
+
+    # Ejecutamos la consulta
+    ofertas = query.limit(limit).all()
+
+    return ofertas
