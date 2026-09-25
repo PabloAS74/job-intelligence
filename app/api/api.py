@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
 from app.db.database import SessionLocal, get_db
-from app.db.models import Job
+from app.db.models import Job, Role, Location
 from app.schemas.response_schemas import JobResponse
 
 # Inicializamos la API  
@@ -27,10 +27,10 @@ def get_jobs(
     query = db.query(Job)
     
     if role:
-        query = query.filter(Job.title.ilike(f"%{role}%"))
+        query = query.join(Job.role).filter(Role.name.ilike(f"%{role}%"))
     
     if location:
-        query = query.filter(Job.location.ilike(f"%{location}%"))
+        query = query.join(Job.location).filter(Location.city.ilike(f"%{location}%"))
 
     # Ejecutamos la consulta
     ofertas = query.limit(limit).all()

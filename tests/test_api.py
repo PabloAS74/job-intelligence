@@ -28,3 +28,39 @@ def test_get_jobs_custom_limit() -> None:
     
     data = response.json()
     assert len(data) <= 3
+    
+def test_get_jobs_filter_by_role():
+    """
+    Verifica que el filtro 'role' funciona y busca dentro del título.
+    """
+    # Buscamos un rol que sabemos que existe por nuestro scraper (ej. "developer" o "python")
+    response = client.get("/api/jobs?role=developer")
+    assert response.status_code == 200
+    
+    data = response.json()
+    if len(data) > 0:
+        # Comprobamos que "developer" está en el título (ignorando mayúsculas)
+        assert "developer" in data[0]["title"].lower()
+
+def test_get_jobs_filter_by_location():
+    """
+    Verifica que el filtro 'location' funciona correctamente.
+    """
+    response = client.get("/api/jobs?location=madrid")
+    assert response.status_code == 200
+    
+    data = response.json()
+    if len(data) > 0:
+        assert "madrid" in data[0]["location"].lower()
+
+def test_get_jobs_invalid_limit_validation():
+    """
+    Verifica que FastAPI devuelve un error 422 si le pasamos
+    un tipo de dato incorrecto (texto en lugar de número).
+    Este es el error que descubriste manualmente.
+    """
+    # Pasamos texto ("tres") en lugar de un número (3)
+    response = client.get("/api/jobs?limit=tres")
+    
+    assert response.status_code == 422
+    
