@@ -54,3 +54,8 @@ class JobDetailedResponse(JobResponse):
         source_id: str # El ID original de la oferta en esa web
         url: str
                 
+                
+class CompanyStatsResponse(BaseModel):
+    company: CompanyResponse
+    job_count: int
+    model_config = {"from_attributes": True}
