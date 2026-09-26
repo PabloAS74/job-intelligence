@@ -30,12 +30,12 @@ class RemotiveScraper(BaseScraper):
                 try:
                     # Recortamos la descripción
                     raw_description = item.get("description", "")
-                    
+
                     # Limpiamos la descripción de HTML y etiquetas
                     if raw_description:
                         soup = BeautifulSoup(raw_description, "html.parser")
                         cleaned_description = soup.get_text(separator="\n", strip=True)
-                    
+
                     if len(cleaned_description) > 5000:
                         description = cleaned_description[:5000] + "..."
 
@@ -57,7 +57,7 @@ class RemotiveScraper(BaseScraper):
                     if salary:
                         salary_min = int(salary.group(1)) * 1000
                         salary_max = int(salary.group(2)) * 1000
-    
+
                     employment_type = re.sub(r"_", "-", item.get("job_type", ""))
 
                     # Mapeamos los datos a nuestro ScrapedJob

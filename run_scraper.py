@@ -82,10 +82,10 @@ def guardar_en_bd(ofertas):
 
 
 def main():
-    
+
     # Esta línea crea todas las tablas si no existen. Si ya existen, no hace nada.
     Base.metadata.create_all(bind=engine)
-    
+
     scraper = RemotiveScraper()
     ofertas = scraper.scrape("python")
 
