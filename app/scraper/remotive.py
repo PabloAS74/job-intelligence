@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 
 import httpx
+from bs4 import BeautifulSoup
 
 from .base import BaseScraper, ScrapedJob
 
@@ -28,9 +29,15 @@ class RemotiveScraper(BaseScraper):
             for item in ofertas:
                 try:
                     # Recortamos la descripción
-                    description = item.get("description", "")
-                    if len(description) > 5000:
-                        description = description[:5000] + "..."
+                    raw_description = item.get("description", "")
+                    
+                    # Limpiamos la descripción de HTML y etiquetas
+                    if raw_description:
+                        soup = BeautifulSoup(raw_description, "html.parser")
+                        cleaned_description = soup.get_text(separator="\n", strip=True)
+                    
+                    if len(cleaned_description) > 5000:
+                        description = cleaned_description[:5000] + "..."
 
                     fecha_pub = item.get("publication_date")
                     if fecha_pub:
