@@ -1,7 +1,8 @@
-from pydantic import BaseModel
 from datetime import datetime
 
-from app.db.models import RemoteType, EmploymentType, ExperienceLevel
+from pydantic import BaseModel
+
+from app.db.models import EmploymentType, ExperienceLevel, RemoteType
 
 
 class CompanyResponse(BaseModel):
@@ -13,7 +14,9 @@ class CompanyResponse(BaseModel):
 
 class LocationResponse(BaseModel):
     id: int
-    city: str
+    city: str | None = None
+    region: str | None = None
+    country: str | None = None
     model_config = {"from_attributes": True}
 
 

@@ -1,14 +1,15 @@
-from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
-from sqlalchemy import func, desc
 
-from app.db.database import SessionLocal, get_db
-from app.db.models import Job, Role, Location, Company
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy import desc, func
+from sqlalchemy.orm import Session
+
+from app.db.database import get_db
+from app.db.models import Company, Job, Location, Role
 from app.schemas.response_schemas import (
-    JobResponse,
-    JobDetailedResponse,
     CompanyStatsResponse,
+    JobDetailedResponse,
+    JobResponse,
 )
 
 # Inicializamos la API
@@ -25,13 +26,13 @@ def get_jobs(
     role: str | None = None,
     location: str | None = None,
     days: int | None = None,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db),  # noqa: B008
 ):
     """
     Devuelve una lista de ofertas de trabajo.
     Puedes cambiar el límite añadiendo ?limit=20 en la URL.
     """
-    limit_date = datetime.now() - timedelta(days=days) if days else None
+    limit_date = datetime.now() - timedelta(days=days) if days else None  # noqa: DTZ005
 
     # Consulta base
     query = (
@@ -47,13 +48,13 @@ def get_jobs(
         query = query.join(Job.location).filter(Location.city.ilike(f"%{location}%"))
 
     # Ejecutamos la consulta
-    ofertas = query.limit(limit).all()
+    ofertas = query.order_by(desc(Job.published_at)).limit(limit).all()
 
     return ofertas
 
 
 @app.get("/api/jobs/{job_id}", response_model=JobDetailedResponse)
-def get_job_by_id(job_id: int, db: Session = Depends(get_db)):
+def get_job_by_id(job_id: int, db: Session = Depends(get_db)):  # noqa: B008
     """
     Devuelve los detalles de una oferta de trabajo por su ID.
     """
@@ -67,7 +68,7 @@ def get_job_by_id(job_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/api/stats/top-companies", response_model=list[CompanyStatsResponse])
-def get_top_companies(limit: int = 5, db: Session = Depends(get_db)):
+def get_top_companies(limit: int = 5, db: Session = Depends(get_db)):  # noqa: B008
     """
     Devuelve las empresas con más ofertas de trabajo.
     """
