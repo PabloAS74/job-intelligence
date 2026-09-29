@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import requests
+from bs4 import BeautifulSoup
 
 import streamlit as st
 
@@ -70,15 +71,32 @@ def format_location(location: dict | None) -> str:
     return ", ".join(unique_parts) or "No indicada"
 
 
+def clean_description(description: str | None) -> str:
+    """Convierte la descripción recibida de la API en texto legible."""
+    if not description:
+        return "Esta oferta no incluye una descripción."
+
+    text = BeautifulSoup(description, "html.parser").get_text(separator="\n", strip=True)
+    lines = (line.strip() for line in text.splitlines())
+    clean_text = "\n\n".join(line for line in lines if line)
+    return clean_text or "Esta oferta no incluye una descripción."
+
+
+@st.dialog("Detalle completo de la oferta", width="large")
 def render_job_details(job_id: int) -> None:
-    try:
-        detail = api_get(f"jobs/{job_id}").json()
-    except requests.RequestException:
-        st.error("No se han podido cargar los detalles de esta oferta.")
-        return
+    with st.spinner("Cargando detalle..."):
+        try:
+            detail = api_get(f"jobs/{job_id}").json()
+        except (requests.RequestException, ValueError):
+            st.error("No se han podido cargar los detalles de esta oferta.")
+            return
+
+    st.subheader(detail.get("title") or "Oferta sin título")
+    company = detail.get("company") or {}
+    st.caption(company.get("name") or "Empresa no indicada")
 
     st.markdown("#### Descripción")
-    st.write(detail.get("description") or "Esta oferta no incluye una descripción.")
+    st.write(clean_description(detail.get("description")))
 
     detail_col_1, detail_col_2 = st.columns(2)
     detail_col_1.markdown(
@@ -122,17 +140,11 @@ def render_job_card(job: dict) -> None:
             f"📅 **Publicada**  \n{format_date(job.get('published_at'))}"
         )
 
-        selected_job = st.session_state.get("selected_job")
-        is_selected = selected_job == job["id"]
-        button_label = "Ocultar detalles" if is_selected else "Ver detalles"
-        if st.button(button_label, key=f"job-details-{job['id']}"):
-            st.session_state.selected_job = None if is_selected else job["id"]
-            is_selected = not is_selected
-
-        # El detalle se pide a la API sólo para la tarjeta seleccionada.
-        if is_selected:
-            with st.expander("Detalles de la oferta", expanded=True):
-                render_job_details(job["id"])
+        if st.button(
+            "Ver detalle completo", key=f"job-details-{job['id']}", type="secondary"
+        ):
+            # La petición al endpoint de detalle sólo se realiza al abrir el diálogo.
+            render_job_details(job["id"])
 
 
 def render_job_search() -> None:
