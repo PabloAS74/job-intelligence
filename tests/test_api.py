@@ -54,7 +54,10 @@ def test_get_jobs_filter_by_location():
 
     data = response.json()
     if len(data) > 0:
-        assert "madrid" in data[0]["location"].lower()
+        assert any(
+            "madrid" in (location.get("city") or "").lower()
+            for location in data[0]["locations"]
+        )
 
 
 def test_get_jobs_invalid_limit_validation():

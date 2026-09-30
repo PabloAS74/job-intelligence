@@ -28,12 +28,14 @@ def guardar_en_bd(ofertas):
                 db.add(rol)
                 db.flush()
 
-            # Buscar si location ya existe; si no, lo creamos
-            location = db.query(Location).filter_by(city=oferta.location).first()
-            if not location:
-                location = Location(city=oferta.location)
-                db.add(location)
-                db.flush()
+            locations = []
+            for city in oferta.locations:
+                location = db.query(Location).filter_by(city=city).first()
+                if not location:
+                    location = Location(city=city)
+                    db.add(location)
+                    db.flush()
+                locations.append(location)
 
             # Comprobar si la oferta ya existe para no insertar duplicados
             oferta_existente = (
@@ -49,7 +51,7 @@ def guardar_en_bd(ofertas):
                     description=oferta.description,
                     role_id=rol.id,
                     company_id=empresa.id,
-                    location_id=location.id,
+                    locations=locations,
                     remote_type=oferta.remote_type,
                     employment_type=oferta.employment_type,
                     experience_level=oferta.experience_level,

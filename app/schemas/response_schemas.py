@@ -32,7 +32,7 @@ class JobResponse(BaseModel):
 
     role: RoleResponse
     company: CompanyResponse
-    location: LocationResponse
+    locations: list[LocationResponse]
 
     remote_type: RemoteType | None = None
     employment_type: EmploymentType | None = None

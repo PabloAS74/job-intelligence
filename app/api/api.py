@@ -45,7 +45,7 @@ def get_jobs(
         query = query.join(Job.role).filter(Role.name.ilike(f"%{role}%"))
 
     if location:
-        query = query.join(Job.location).filter(Location.city.ilike(f"%{location}%"))
+        query = query.join(Job.locations).filter(Location.city.ilike(f"%{location}%"))
 
     # Ejecutamos la consulta
     ofertas = query.order_by(desc(Job.published_at)).limit(limit).all()

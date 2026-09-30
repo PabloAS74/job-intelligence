@@ -4,7 +4,7 @@ from datetime import datetime
 import httpx
 from bs4 import BeautifulSoup
 
-from .base import BaseScraper, ScrapedJob
+from .base import BaseScraper, ScrapedJob, normalize_locations
 
 
 class RemotiveScraper(BaseScraper):
@@ -68,8 +68,8 @@ class RemotiveScraper(BaseScraper):
                         url=item.get("url", ""),
                         source="remotive",
                         source_id=str(item.get("id", "")),
-                        location=item.get(
-                            "candidate_required_location", "No especificada"
+                        locations=normalize_locations(
+                            item.get("candidate_required_location")
                         ),
                         role=item.get("title", "Sin título"),
                         published_at=published_at,

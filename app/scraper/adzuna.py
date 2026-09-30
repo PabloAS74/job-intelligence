@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import httpx
 from bs4 import BeautifulSoup
 
-from app.scraper.base import BaseScraper, ScrapedJob
+from app.scraper.base import BaseScraper, ScrapedJob, normalize_locations
 
 load_dotenv()
 ADZUNA_APP_ID = os.getenv("ADZUNA_APP_ID")
@@ -63,7 +63,7 @@ class AdzunaScraper(BaseScraper):
                     url=item.get("redirect_url", ""),
                     source="adzuna",
                     source_id=str(item.get("id", "")),
-                    location=item.get("location", {}).get("display_name", "No especificada") if isinstance(item.get("location"), dict) else item.get("location", "No especificada"),
+                    locations=normalize_locations(item.get("location")),
                     role=item.get("title", "Sin título"),
                     published_at=published_at,
                     remote_type="remote",
@@ -89,4 +89,4 @@ if __name__ == "__main__":
     jobs = scraper.scrape("python", "Madrid")
     for job in jobs:
         print(job)
-        
+

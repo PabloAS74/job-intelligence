@@ -43,11 +43,9 @@ class Job(Base):
 
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), nullable=False)
     company_id: Mapped[int] = mapped_column(ForeignKey("companies.id"), nullable=False)
-    location_id: Mapped[int] = mapped_column(ForeignKey("locations.id"), nullable=False)
-
     role: Mapped["Role"] = relationship()
     company: Mapped["Company"] = relationship()
-    location: Mapped["Location"] = relationship()
+    locations: Mapped[list["Location"]] = relationship(secondary="job_locations")
 
     remote_type: Mapped[RemoteType | None] = mapped_column(String(50))
     employment_type: Mapped[EmploymentType | None] = mapped_column(String(50))
@@ -131,3 +129,15 @@ class JobSkill(Base):
 
     def __repr__(self) -> str:
         return f"<JobSkill(job_id={self.job_id}, skill_id={self.skill_id})>"
+
+
+class JobLocation(Base):
+    __tablename__ = "job_locations"
+
+    job_id: Mapped[int] = mapped_column(ForeignKey("jobs.id"), primary_key=True)
+    location_id: Mapped[int] = mapped_column(
+        ForeignKey("locations.id"), primary_key=True
+    )
+
+    def __repr__(self) -> str:
+        return f"<JobLocation(job_id={self.job_id}, location_id={self.location_id})>"

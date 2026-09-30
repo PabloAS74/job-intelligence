@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 from playwright_stealth import stealth
 
-from .base import BaseScraper, ScrapedJob
+from .base import BaseScraper, ScrapedJob, normalize_locations
 
 
 class InfoJobsScraper(BaseScraper):
@@ -189,7 +189,7 @@ class InfoJobsScraper(BaseScraper):
                             description=description,
                             company=company,
                             url=job_url,
-                            location=job_location,
+                            locations=normalize_locations(job_location),
                             role=title,
                             source="infojobs",
                             source_id=source_id,

@@ -63,12 +63,16 @@ def format_salary(job: dict) -> str:
     return f"{amount} {currency}".strip().replace(",", ".")
 
 
-def format_location(location: dict | None) -> str:
-    if not location:
+def format_locations(locations: list[dict] | None) -> str:
+    if not locations:
         return "No indicada"
-    parts = [location.get("city"), location.get("region"), location.get("country")]
-    unique_parts = list(dict.fromkeys(part for part in parts if part))
-    return ", ".join(unique_parts) or "No indicada"
+
+    formatted = []
+    for location in locations:
+        parts = [location.get("city"), location.get("region"), location.get("country")]
+        unique_parts = list(dict.fromkeys(part for part in parts if part))
+        formatted.append(", ".join(unique_parts))
+    return " · ".join(filter(None, formatted)) or "No indicada"
 
 
 def clean_description(description: str | None) -> str:
@@ -126,7 +130,7 @@ def render_job_card(job: dict) -> None:
 
         info_col_1, info_col_2, info_col_3 = st.columns(3)
         info_col_1.markdown(
-            f"📍 **Ubicación**  \n{format_location(job.get('location'))}"
+            f"📍 **Ubicación**  \n{format_locations(job.get('locations'))}"
         )
         info_col_1.markdown(
             f"🧭 **Modalidad**  \n{REMOTE_LABELS.get(job.get('remote_type'), 'No indicada')}"

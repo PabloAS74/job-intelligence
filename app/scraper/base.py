@@ -1,7 +1,24 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl
+
+
+def normalize_locations(value: object) -> list[str]:
+    """Normalize the different location shapes returned by job portals."""
+    if value is None:
+        return []
+
+    values = value if isinstance(value, list) else [value]
+    locations: list[str] = []
+
+    for item in values:
+        if isinstance(item, dict):
+            item = item.get("display_name") or item.get("name")
+        if isinstance(item, str) and item.strip():
+            locations.append(item.strip())
+
+    return list(dict.fromkeys(locations))
 
 
 class ScrapedJob(BaseModel):
@@ -10,14 +27,14 @@ class ScrapedJob(BaseModel):
 
     company: str
     url: HttpUrl
-    location: str | None
+    locations: list[str] = Field(default_factory=list)
     role: str | None
 
     source: str  # Ej: "linkedin", "glassdoor"
     source_id: str  # El ID original de la oferta en esa web
 
     # Campos opcionales
-    skills: list[str] = []  # Lista de habilidades requeridas
+    skills: list[str] = Field(default_factory=list)  # Lista de habilidades requeridas
     remote_type: str | None = None
     employment_type: str | None = None
     experience_level: str | None = None
