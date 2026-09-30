@@ -12,6 +12,7 @@ dependencies = [
     "playwright>=1.63.0",
     "playwright-stealth>=2.0.3",
     "pydantic>=2.13.5",
+    "python-dotenv>=1.2.3",
     "requests>=2.34.2",
     "sqlalchemy>=2.0.54",
     "streamlit>=1.64.0",
