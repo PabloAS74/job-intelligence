@@ -5,7 +5,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 from .base import BaseScraper, ScrapedJob, normalize_locations
-
+from app.utils.normalizer import role_normalizer
 
 class RemotiveScraper(BaseScraper):
     def scrape(self, keyword: str, location: str = "") -> list[ScrapedJob]:
@@ -71,7 +71,7 @@ class RemotiveScraper(BaseScraper):
                         locations=normalize_locations(
                             item.get("candidate_required_location")
                         ),
-                        role=item.get("title", "Sin título"),
+                        role=role_normalizer(item.get("title", "Sin título")),
                         published_at=published_at,
                         remote_type="remote",
                         employment_type=employment_type,

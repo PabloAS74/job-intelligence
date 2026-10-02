@@ -4,10 +4,8 @@ from datetime import datetime
 import requests
 from dotenv import load_dotenv
 
-import httpx
-from bs4 import BeautifulSoup
-
 from app.scraper.base import BaseScraper, ScrapedJob, normalize_locations
+from app.utils.normalizer import role_normalizer
 
 load_dotenv()
 ADZUNA_APP_ID = os.getenv("ADZUNA_APP_ID")
@@ -64,7 +62,7 @@ class AdzunaScraper(BaseScraper):
                     source="adzuna",
                     source_id=str(item.get("id", "")),
                     locations=normalize_locations(item.get("location")),
-                    role=item.get("title", "Sin título"),
+                    role=role_normalizer(item.get("title", "Sin título")),
                     published_at=published_at,
                     remote_type="remote",
                     employment_type=employment_type,
